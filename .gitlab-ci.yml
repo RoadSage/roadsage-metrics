@@ -1,0 +1,15 @@
+backend:
+    image: python:latest
+    tags:
+        - docker
+
+    before_script:
+        - python -V
+        - pip install poetry
+        - cd backend
+        - poetry install
+
+    script:
+        - poetry run black . --check
+        - poetry run isort . --check-only
+        - poetry run mypy
