@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -15,6 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+
+
+# Set database config
+os.environ["PICCOLO_CONF"] = "src.database_conf"
 
 
 class Response(BaseModel):

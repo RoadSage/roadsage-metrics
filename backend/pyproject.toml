@@ -16,6 +16,7 @@ python = "^3.9"
 uvicorn = "^0.15.0"
 fastapi = "^0.70.0"
 requests = "^2.26.0"
+piccolo = {extras = ["sqlite"], version = "^0.58.0"}
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
