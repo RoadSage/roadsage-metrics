@@ -40,6 +40,14 @@ isort . --check-only
 mypy
 ```
 
+## Testing
+
+Unittests are in the `/tests` directory and are run using pytest.
+
+```sh
+pytest
+```
+
 ## Usage
 
 To run the app with reloading enabled for development run:
