@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "roadsage--api"
+version = "0.1.0"
+description = ""
+authors = [
+  "Ben Brown <2455263b@stuent.gla.ac.uk>",
+  "Fadi Chahine <2483052c@student.gla.ac.uk>",
+  "Stuart Malcolm <2470874m@student.gla.ac.uk>",
+  "Yue Cai <2471065c@student.gla.ac.uk>"]
+repository = 'https://stgit.dcs.gla.ac.uk/team-project-h/2021/cs12/cs12-main'
+readme = 'README.md'
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+uvicorn = "^0.15.0"
+fastapi = "^0.70.0"
+requests = "^2.26.0"
+piccolo = {extras = ["sqlite"], version = "^0.58.0"}
+
+[tool.poetry.dev-dependencies]
+black = "^21.9b0"
+mypy = "^0.910"
+isort = "^5.9.3"
+pytest = "^6.2.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+strict = true
+plugins = "pydantic.mypy"
+mypy_path = 'src/types'
+files = '**/*.py'
+
+
+[tool.isort]
+profile = "black"
