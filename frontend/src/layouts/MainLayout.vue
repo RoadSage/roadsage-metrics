@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar class = "justify-between constrain">
+      <q-toolbar class="justify-between constrain">
         <!--
         <q-btn
           flat
@@ -13,39 +13,20 @@
         />
         -->
 
+        <q-avatar>
+          <q-img src="~src\assets\UniticLogo.webp" />
+        </q-avatar>
 
+        <div>
+          <q-btn label="Sign In" unelevated to="/signin" />
 
-          <q-avatar>
-            <q-img src="~src\assets\UniticLogo.webp" />
-          </q-avatar>
+          <q-btn label="Sign Up" to="/signup" unelevated />
 
-          <div>
-            <q-btn
-              label = "Sign In"
-              unelevated
-              to = "/signin"
-            />
-
-            <q-btn
-            label = "Sign Up"
-            to = "/signup"
-            unelevated
-            />
-
-            <q-btn
-            label = "Home"
-            to = "/"
-            unelevated
-            />
-
-
+          <q-btn label="Home" to="/" unelevated />
         </div>
-
-
-
       </q-toolbar>
     </q-header>
-<!--
+    <!--
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
@@ -67,5 +48,3 @@
     </q-page-container>
   </q-layout>
 </template>
-
-
