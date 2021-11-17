@@ -32,6 +32,12 @@
             unelevated
             />
 
+            <q-btn
+            label = "Home"
+            to = "/"
+            unelevated
+            />
+
 
         </div>
 
