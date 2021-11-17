@@ -1,0 +1,15 @@
+// Images
+*.png
+*.ico
+*.svg
+
+// Config Files
+.editorconfig
+.eslintignore
+.prettierignore
+
+// Output
+.quasar/**
+dist/**
+node_modules/**
+public/**

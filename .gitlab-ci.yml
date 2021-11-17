@@ -1,4 +1,5 @@
 backend:
+    needs: []
     image: python:latest
     tags:
         - docker
@@ -14,3 +15,20 @@ backend:
         - poetry run isort . --check-only
         - poetry run mypy
         - poetry run pytest
+
+frontend:
+    needs: []
+    image: node:latest
+    tags:
+        - docker
+
+    before_script:
+        - node --version
+        - npm --version
+        - cd frontend
+        - npm ci
+
+    script:
+        - npm run format\:check
+        - npm run lint
+        - npx quasar build
