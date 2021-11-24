@@ -14,7 +14,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Hashing Settings
-SECRET_KEY = os.environ["APP_SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -41,6 +40,8 @@ def create_access_token(data: Dict[str, Any], expires_delta: timedelta) -> str:
     expire = datetime.utcnow() + expires_delta
 
     to_encode.update({"exp": expire})
+
+    SECRET_KEY = os.environ["APP_SECRET_KEY"]
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -53,6 +54,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     )
 
     try:
+        SECRET_KEY = os.environ["APP_SECRET_KEY"]
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: Optional[str] = payload.get("sub")
         if username is None:
