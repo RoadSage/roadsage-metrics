@@ -30,3 +30,14 @@ async def get_user(email: str) -> Optional[UserInDB]:
     if not user:
         return None
     return UserInDB(**user)
+
+
+async def create_user(user: UserInDB) -> None:
+    UserTable.insert(
+        UserTable(
+            email=user.email,
+            hashed_password=user.hashed_password,
+            full_name=user.full_name,
+            disabled=user.disabled,
+        )
+    ).run()

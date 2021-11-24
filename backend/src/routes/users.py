@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ..database import create_user, get_user
-from ..schemas import Message, NewUser, Token, User, UserInDB
+from ..schemas import NewUser, Token, User, UserInDB
 from ..utils.auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     authenticate_user,
@@ -40,6 +40,24 @@ async def login_for_access_token(
         token_type="bearer",
     )
 
+
+@router.post("/signup", response_model=Token)
+async def signup_for_access_token(user: NewUser) -> Token:
+    exisiting_user = await get_user(user.email)
+    if exisiting_user:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            detail=f"User with email '{user.email}' already exists",
+        )
+
+    user_for_db = UserInDB(
+        **dict(user), hashed_password=get_password_hash(user.password)
+    )
+    await create_user(user_for_db)
+
+    return Token(
+        access_token=create_access_token(
+            data={"sub": user.email},
             expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
         ),
         token_type="bearer",
