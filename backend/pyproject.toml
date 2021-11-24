@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "roadsage--api"
+name = "roadsage-api"
 version = "0.1.0"
 description = ""
 authors = [
@@ -20,6 +20,9 @@ piccolo = {extras = ["sqlite"], version = "^0.58.0"}
 python-multipart = "^0.0.5"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+Authlib = "^0.15.5"
+httpx = "^0.21.1"
+itsdangerous = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
@@ -41,6 +44,7 @@ strict = true
 plugins = "pydantic.mypy"
 mypy_path = 'src/types'
 files = '**/*.py'
+ignore_missing_imports = true
 
 [tool.isort]
 profile = "black"

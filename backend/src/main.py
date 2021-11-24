@@ -2,8 +2,9 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from starlette.middleware.sessions import SessionMiddleware
 
+from .routes.sso import router as sso_router
 from .routes.users import router as user_router
 
 app = FastAPI(
@@ -19,10 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+app.add_middleware(SessionMiddleware, secret_key="some-random-string")
 
 
 # Set database config
 os.environ["PICCOLO_CONF"] = "src.database_conf"
 
-
+app.include_router(sso_router)
 app.include_router(user_router)
