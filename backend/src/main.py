@@ -26,12 +26,3 @@ os.environ["PICCOLO_CONF"] = "src.database_conf"
 
 
 app.include_router(user_router)
-
-
-class Response(BaseModel):
-    message: str
-
-
-@app.get("/", response_model=Response)
-async def root() -> Response:
-    return Response(message="Hello World")
