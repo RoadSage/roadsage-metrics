@@ -6,7 +6,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ..database import create_user, get_user
 from ..schemas import NewUser, Token, User, UserInDB
 from ..utils.auth import (
-    ACCESS_TOKEN_EXPIRE_MINUTES,
     authenticate_user,
     create_access_token,
     get_current_active_user,
@@ -32,13 +31,7 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return Token(
-        access_token=create_access_token(
-            data={"sub": user.email},
-            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-        ),
-        token_type="bearer",
-    )
+    return create_access_token(user.email)
 
 
 @router.post("/signup", response_model=Token)
@@ -55,13 +48,7 @@ async def signup_for_access_token(user: NewUser) -> Token:
     )
     await create_user(user_for_db)
 
-    return Token(
-        access_token=create_access_token(
-            data={"sub": user.email},
-            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-        ),
-        token_type="bearer",
-    )
+    return create_access_token(user.email)
 
 
 @router.get("/users/me/", response_model=User)
