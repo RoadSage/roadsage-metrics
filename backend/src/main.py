@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from .routes.users import router as user_router
+
 app = FastAPI(
     title="Roadsage - Metrics",
     description="An API to collect and store sensor data and usage metrics from the Roadsage app and display.",
@@ -21,6 +23,9 @@ app.add_middleware(
 
 # Set database config
 os.environ["PICCOLO_CONF"] = "src.database_conf"
+
+
+app.include_router(user_router)
 
 
 class Response(BaseModel):

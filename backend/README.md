@@ -52,6 +52,24 @@ coverage report --skip-empty
 
 ## Usage
 
+#### Secret Key
+
+The passwords are hashed and the app expects the a secret key to be stored in the APP_SECRET_KEY enviroment variable.
+
+To generate a secret key run:
+
+```sh
+openssl rand -hex 32
+```
+
+and store the result in the APP_SECRET_KEY environment variable.
+
+```sh
+set APP_SECRET_KEY=<secret key generate with command above>
+```
+
+#### Start Server
+
 To run the app with reloading enabled for development run:
 
 ```sh
