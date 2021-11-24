@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from ..database import get_user
-from ..schemas import TokenData, User
+from ..schemas import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -26,8 +26,8 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-async def authenticate_user(username: str, password: str) -> Optional[User]:
-    user = await get_user(username)
+async def authenticate_user(email: str, password: str) -> Optional[User]:
+    user = await get_user(email)
 
     if not user or not verify_password(password, user.hashed_password):
         return None
@@ -56,13 +56,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     try:
         SECRET_KEY = os.environ["APP_SECRET_KEY"]
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: Optional[str] = payload.get("sub")
-        if username is None:
+        email: Optional[str] = payload.get("sub")
+        if email is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    user = await get_user(username=username)
+    user = await get_user(email=email)
     if user is None:
         raise credentials_exception
 

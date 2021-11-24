@@ -23,14 +23,12 @@ def add_sample_data() -> None:
     # Add sample data
     UserTable.insert(
         UserTable(
-            username="JohnDoe",
             hashed_password=get_password_hash("password"),
             email="johndoe@gmail.com",
             full_name="Johnathan Doe",
             disabled=False,
         ),
         UserTable(
-            username="Sally",
             hashed_password=get_password_hash("password"),
             email="sally@gmail.com",
             full_name="Sally Smith",
@@ -40,19 +38,19 @@ def add_sample_data() -> None:
 
 
 class TestCase:
-    def setup_method(self, test_method: Callable[[], None]) -> None:
+    def setup_method(self, _test_method: Callable[[], None]) -> None:
         os.environ["APP_SECRET_KEY"] = "secret"
         create_tables()
         add_sample_data()
         self.client = TestClient(app)
 
-    def teardown_method(self, test_method: Callable[[], None]) -> None:
+    def teardown_method(self, _test_method: Callable[[], None]) -> None:
         engine_finder().remove_db_file()  # type: ignore
 
-    def get_token(self, username: str = "JohnDoe") -> str:
+    def get_token(self, email: str = "johndoe@gmail.com") -> str:
         response = self.client.post(
             "/login",
-            data={"username": username, "password": "password"},
+            data={"username": email, "password": "password"},
         )
 
         body = response.json()

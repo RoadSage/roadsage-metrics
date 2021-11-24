@@ -8,14 +8,9 @@ class Token(BaseModel):
     token_type: str
 
 
-class TokenData(BaseModel):
-    username: str = ""
-
-
 class User(BaseModel):
-    username: str
-    email: Optional[str] = None
-    full_name: Optional[str] = None
+    email: str
+    full_name: str
     disabled: Optional[bool] = None
 
 

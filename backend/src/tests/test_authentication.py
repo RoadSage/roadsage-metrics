@@ -8,7 +8,7 @@ from .helpers import TestCase
 class TestAuthentication(TestCase):
     def test_successful_login(self) -> None:
         response = self.client.post(
-            "/login", data={"username": "JohnDoe", "password": "password"}
+            "/login", data={"username": "johndoe@gmail.com", "password": "password"}
         )
 
         body = response.json()
@@ -19,13 +19,13 @@ class TestAuthentication(TestCase):
 
     def test_wrong_password(self) -> None:
         response = self.client.post(
-            "/login", data={"username": "JohnDoe", "password": "hello_world"}
+            "/login", data={"username": "johndoe@gmail.com", "password": "hello_world"}
         )
 
         body = response.json()
 
         assert response.status_code == 401
-        assert body == {"detail": "Incorrect username or password"}
+        assert body == {"detail": "Incorrect email or password"}
 
     def test_get_current_user_not_logged_in(self) -> None:
         response = self.client.get("/users/me")
@@ -43,12 +43,12 @@ class TestAuthentication(TestCase):
             "disabled": False,
             "email": "johndoe@gmail.com",
             "full_name": "Johnathan Doe",
-            "username": "JohnDoe",
         }
 
     def test_get_inactive_user(self) -> None:
         response = self.client.get(
-            "/users/me", headers={"Authorization": f"Bearer {self.get_token('Sally')}"}
+            "/users/me",
+            headers={"Authorization": f"Bearer {self.get_token('sally@gmail.com')}"},
         )
 
         assert response.status_code == 400
