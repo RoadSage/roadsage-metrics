@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -11,7 +9,7 @@ class Token(BaseModel):
 class User(BaseModel):
     email: str
     full_name: str
-    disabled: Optional[bool] = None
+    disabled: bool = False
 
 
 class UserInDB(User):

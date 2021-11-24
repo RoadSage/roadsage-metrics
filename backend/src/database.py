@@ -33,7 +33,7 @@ async def get_user(email: str) -> Optional[UserInDB]:
 
 
 async def create_user(user: UserInDB) -> None:
-    UserTable.insert(
+    await UserTable.insert(
         UserTable(
             email=user.email,
             hashed_password=user.hashed_password,
