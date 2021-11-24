@@ -42,10 +42,12 @@ mypy
 
 ## Testing
 
-Unittests are in the `/tests` directory and are run using pytest.
+Unittests are in the `/tests` directory and are run using pytest. To run all the tests and gather test coverage:
 
 ```sh
-pytest
+coverage run -m pytest
+coverage html
+coverage report --skip-empty
 ```
 
 ## Usage

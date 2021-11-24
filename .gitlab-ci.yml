@@ -15,6 +15,8 @@ backend:
         - poetry run isort . --check-only
         - poetry run mypy
         - poetry run pytest
+        - poetry run coverage run -m pytest
+        - poetry run coverage report --skip-empty
 
 frontend:
     needs: []

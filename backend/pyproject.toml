@@ -23,17 +23,21 @@ black = "^21.9b0"
 mypy = "^0.910"
 isort = "^5.9.3"
 pytest = "^6.2.5"
+coverage = "^6.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.report]
+omit = [".venv/*", "*/test*", "*/*database_conf.py"]
+exclude_lines = ["coverage: ignore"]
 
 [tool.mypy]
 strict = true
 plugins = "pydantic.mypy"
 mypy_path = 'src/types'
 files = '**/*.py'
-
 
 [tool.isort]
 profile = "black"
