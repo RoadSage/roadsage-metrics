@@ -18,11 +18,15 @@
         </q-avatar>
 
         <div>
-          <q-btn label="Sign In" unelevated to="/signin" />
-
-          <q-btn label="Sign Up" to="/signup" unelevated />
-
           <q-btn label="Home" to="/" unelevated />
+          <template v-if="!user">
+            <q-btn label="Sign In" unelevated to="/signin" />
+            <q-btn label="Sign Up" to="/signup" unelevated />
+          </template>
+          <template v-else>
+            <q-btn label="Dashboard" to="/dashboard" unelevated />
+            <q-btn label="Logout" unelevated @click="logout" />
+          </template>
         </div>
       </q-toolbar>
     </q-header>
@@ -48,3 +52,15 @@
     </q-page-container>
   </q-layout>
 </template>
+<script setup lang="ts">
+import { inject, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const user = inject('user', ref(''));
+
+const logout = async () => {
+  user.value = '';
+  await router.push('/');
+};
+</script>
