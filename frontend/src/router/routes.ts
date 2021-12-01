@@ -1,4 +1,16 @@
 import { RouteRecordRaw } from 'vue-router';
+import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router';
+import { Cookies } from 'quasar';
+
+const requireAuth = (to: RouteLocationNormalized): RouteLocationRaw | true => {
+  if (!Cookies.get('user'))
+    return {
+      path: '/signin',
+      query: { redirect: to.fullPath },
+    };
+
+  return true;
+};
 
 const routes: RouteRecordRaw[] = [
   {
@@ -11,6 +23,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/dashboard',
         component: () => import('pages/Dashboard.vue'),
+        beforeEnter: requireAuth,
       },
     ],
   },
