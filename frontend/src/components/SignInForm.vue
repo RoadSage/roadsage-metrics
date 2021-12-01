@@ -1,9 +1,18 @@
 <template>
   <div class="q-pl-xl col-8 large-screen-only" style="max-width: 400px">
     <q-form
-      class="q-gutter-md column items-center content-start sign-in-box q-px-xl"
+      class="items-center content-start q-gutter-md column sign-in-box q-px-xl"
+      @submit.prevent="login"
     >
       <h1 class="text-headerColor text-h4">Sign In</h1>
+
+      <q-banner class="text-white bg-primary" v-if="hadError">
+        Problem signing in, please check your details and try again.
+        <template #action>
+          <q-btn flat color="white" label="Dismiss" @click="hadError = false" />
+        </template>
+      </q-banner>
+
       <q-input
         filled
         type="email"
@@ -11,6 +20,7 @@
         class="full-width"
         label="Email"
         hint="Please enter your email"
+        required
       />
       <q-input
         v-model="password"
@@ -19,6 +29,7 @@
         :type="isPwdVisible ? 'password' : 'text'"
         label="Password"
         hint="Please enter your password"
+        required
       >
         <template v-slot:append>
           <q-icon
@@ -57,17 +68,44 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { ref, inject } from 'vue';
+import type { Ref } from 'vue';
+import { useQuasar } from 'quasar';
+import { useRouter } from 'vue-router';
 
-export default {
-  setup() {
-    return {
-      password: ref(''),
-      email: ref(''),
-      isPwdVisible: ref(true),
-      rememberMe: ref(false),
-    };
-  },
+import { api } from 'boot/axios';
+
+const $q = useQuasar();
+const router = useRouter();
+const user: Ref<string> = inject('user', ref(''));
+
+const remeberedEmail = $q.cookies.get('rememberedEmail');
+
+const email = ref(remeberedEmail || '');
+const password = ref('');
+const isPwdVisible = ref(true);
+const rememberMe = ref(!!remeberedEmail);
+
+const hadError = ref(false);
+const login = async () => {
+  hadError.value = false;
+  $q.cookies.set('rememberedEmail', rememberMe.value ? email.value : '');
+
+  try {
+    // OAuth spec says that the login information must be sent as URL Encoded FormData
+    const formData = new URLSearchParams({
+      username: email.value, // OAuth spec expects a username (evn though its an email)
+      password: password.value,
+    });
+
+    const response = await api.post('/login', formData, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    user.value = JSON.stringify(response.data);
+    await router.push('/dashboard');
+  } catch {
+    hadError.value = true;
+  }
 };
 </script>
