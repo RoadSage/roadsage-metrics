@@ -44,4 +44,4 @@ frontend:
     script:
         - npm run format\:check
         - npm run lint
-        - npx quasar build
+        - npm run build
