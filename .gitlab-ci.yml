@@ -4,17 +4,23 @@ backend:
     tags:
         - docker
 
+    cache:
+        key: poetry
+        paths:
+            - backend/.cache/pip
+            - backend/.venv
+
     before_script:
         - python -V
         - pip install poetry
         - cd backend
+        - poetry config virtualenvs.in-project true
         - poetry install
 
     script:
         - poetry run black . --check
         - poetry run isort . --check-only
         - poetry run mypy
-        - poetry run pytest
         - poetry run coverage run -m pytest
         - poetry run coverage report --skip-empty
 
