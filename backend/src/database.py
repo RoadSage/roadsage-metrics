@@ -12,6 +12,7 @@ class UserTable(Table):
     hashed_password = Secret()
     full_name = Text()
     disabled = Boolean(default=False)
+    admin = Boolean(default=False)
 
 
 async def get_user(email: str) -> Optional[UserInDB]:
@@ -21,6 +22,7 @@ async def get_user(email: str) -> Optional[UserInDB]:
             UserTable.hashed_password,
             UserTable.full_name,
             UserTable.disabled,
+            UserTable.admin,
         )
         .where(UserTable.email == email)
         .first()
@@ -39,5 +41,6 @@ async def create_user(user: UserInDB) -> None:
             hashed_password=user.hashed_password,
             full_name=user.full_name,
             disabled=user.disabled,
+            admin=user.admin,
         )
     ).run()

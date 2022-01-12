@@ -10,6 +10,7 @@ class User(BaseModel):
     email: str
     full_name: str
     disabled: bool = False
+    admin: bool = False
 
 
 class UserInDB(User):

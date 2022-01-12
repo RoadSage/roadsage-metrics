@@ -56,6 +56,7 @@ class TestAuthentication(TestCase):
             "disabled": False,
             "email": "johndoe@gmail.com",
             "full_name": "Johnathan Doe",
+            "admin": False,
         }
 
     def test_get_inactive_user(self) -> None:
