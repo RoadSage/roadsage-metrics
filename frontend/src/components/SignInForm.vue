@@ -69,16 +69,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue';
-import type { Ref } from 'vue';
+import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
 import { api } from 'boot/axios';
+import { getUser } from 'boot/auth';
+
+type LoginResponse = {
+  access_token: string;
+  token_type: string;
+};
 
 const $q = useQuasar();
 const router = useRouter();
-const user: Ref<string> = inject('user', ref(''));
+const user = getUser();
 
 const remeberedEmail = $q.cookies.get('rememberedEmail');
 
@@ -95,14 +100,15 @@ const login = async () => {
   try {
     // OAuth spec says that the login information must be sent as URL Encoded FormData
     const formData = new URLSearchParams({
-      username: email.value, // OAuth spec expects a username (evn though its an email)
+      username: email.value, // OAuth spec expects a username (even though its an email)
       password: password.value,
     });
 
     const response = await api.post('/login', formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
-    user.value = JSON.stringify(response.data);
+
+    user.value = (response.data as LoginResponse).access_token;
     await router.push('/dashboard');
   } catch {
     hadError.value = true;

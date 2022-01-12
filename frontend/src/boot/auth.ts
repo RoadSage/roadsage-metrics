@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
-import { ref, watch } from 'vue';
+import { ref, watch, inject } from 'vue';
+import type { Ref } from 'vue';
 import { Cookies } from 'quasar';
 
 export default boot(({ app }) => {
@@ -9,3 +10,5 @@ export default boot(({ app }) => {
   app.provide('user', user);
   watch(user, (value) => Cookies.set('user', value));
 });
+
+export const getUser = (): Ref<string> => inject('user', ref(''));

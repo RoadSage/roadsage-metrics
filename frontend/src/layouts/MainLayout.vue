@@ -53,11 +53,11 @@
   </q-layout>
 </template>
 <script setup lang="ts">
-import { inject, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { getUser } from 'boot/auth';
 
 const router = useRouter();
-const user = inject('user', ref(''));
+const user = getUser();
 
 const logout = async () => {
   user.value = '';
