@@ -27,4 +27,10 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api };
+const authorizedApi = (token: string) =>
+  axios.create({
+    baseURL: 'http://localhost:8000',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export { api, authorizedApi };
