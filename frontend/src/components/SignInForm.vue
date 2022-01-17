@@ -20,7 +20,7 @@
         class="full-width"
         label="Email"
         hint="Please enter your email"
-        required
+        :rules="[requiredRule]"
       />
       <q-input
         v-model="password"
@@ -29,7 +29,7 @@
         :type="isPwdVisible ? 'password' : 'text'"
         label="Password"
         hint="Please enter your password"
-        required
+        :rules="[requiredRule]"
       >
         <template v-slot:append>
           <q-icon
@@ -86,6 +86,14 @@ const router = useRouter();
 const user = getUser();
 
 const remeberedEmail = $q.cookies.get('rememberedEmail');
+
+const requiredRule = (value) => {
+  if (value) {
+    return true;
+  } else {
+    return '* Required';
+  }
+};
 
 const email = ref(remeberedEmail || '');
 const password = ref('');
