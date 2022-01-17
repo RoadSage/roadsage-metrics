@@ -2,8 +2,22 @@
   <div class="q-pl-xl col-8 large-screen-only" style="max-width: 400px">
     <q-form
       class="q-gutter-md column items-center content-start sign-in-box q-px-xl"
+      @submit.prevent="signup"
     >
       <h1 class="text-headerColor text-h4">Sign Up</h1>
+
+      <q-banner class="text-white bg-primary" v-if="errorMessage">
+        {{ errorMessage }}
+        <template #action>
+          <q-btn
+            flat
+            color="white"
+            label="Dismiss"
+            @click="errorMessage = ''"
+          />
+        </template>
+      </q-banner>
+
       <q-input
         filled
         v-model="fullName"
@@ -43,27 +57,19 @@
         v-model="confirmPassword"
         class="full-width"
         filled
-        :type="isPwdConfirmedVisible ? 'password' : 'text'"
-        label="Password"
+        :type="isPwdVisible ? 'password' : 'text'"
+        label="Password Confirmation"
         hint="Please enter your password"
         :rules="[requiredRule]"
       >
         <template v-slot:append>
           <q-icon
-            :name="isPwdConfirmedVisible ? 'visibility_off' : 'visibility'"
+            :name="isPwdVisible ? 'visibility_off' : 'visibility'"
             class="cursor-pointer"
-            @click="isPwdConfirmedVisible = !isPwdConfirmedVisible"
+            @click="isPwdVisible = !isPwdVisible"
           />
         </template>
       </q-input>
-
-      <q-btn
-        no-caps
-        label="Sign Up"
-        type="submit"
-        color="accent"
-        class="full-width"
-      />
       <div>
         <q-checkbox
           color="accent"
@@ -71,6 +77,13 @@
           label="I Accept the Terms and Conditions"
         />
       </div>
+      <q-btn
+        no-caps
+        label="Sign Up"
+        type="submit"
+        color="accent"
+        class="full-width"
+      />
       <q-separator class="bg-primary full-width" />
       <p class="text-primary text-h6 q-mr-md">FROM</p>
       <img src="~src\assets\formImage.webp" />
@@ -78,28 +91,73 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  setup() {
-    return {
-      password: ref(''),
-      confirmPassword: ref(''),
-      email: ref(''),
-      fullName: ref(''),
-      isPwdVisible: ref(true),
-      isPwdConfirmedVisible: ref(true),
-      termsConditions: ref(false),
+import { api } from 'boot/axios';
+import axios from 'axios';
+import { getUser } from 'boot/auth';
 
-      requiredRule(value) {
-        if (value) {
-          return true;
-        } else {
-          return '* Required';
-        }
-      },
-    };
-  },
+type LoginResponse = {
+  access_token: string;
+  token_type: string;
+};
+
+const router = useRouter();
+const user = getUser();
+
+const fullName = ref('');
+const email = ref('');
+
+const password = ref('');
+const confirmPassword = ref('');
+const isPwdVisible = ref(false);
+const termsConditions = ref(false);
+
+const requiredRule = (value) => {
+  if (value) {
+    return true;
+  } else {
+    return '* Required';
+  }
+};
+
+type ErrorMessage = {
+  detail: string;
+};
+
+const errorMessage = ref('');
+const signup = async () => {
+  errorMessage.value = '';
+
+  if (!termsConditions.value) {
+    errorMessage.value = 'Please accept the terms and conditions';
+  } else if (password.value !== confirmPassword.value) {
+    errorMessage.value =
+      "Password and Password Confirmation don't match please check and try again.";
+  } else {
+    try {
+      const response = await api.post('/signup', {
+        email: email.value,
+        password: password.value,
+        full_name: fullName.value,
+      });
+
+      user.value = (response.data as LoginResponse).access_token;
+      await router.push('/dashboard');
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 409
+      ) {
+        errorMessage.value = (error.response.data as ErrorMessage).detail;
+      } else {
+        errorMessage.value =
+          'Problem creating an account, please check your details and try again.';
+      }
+    }
+  }
 };
 </script>
