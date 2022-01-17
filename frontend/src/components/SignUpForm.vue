@@ -3,7 +3,15 @@
     <q-form
       class="q-gutter-md column items-center content-start sign-in-box q-px-xl"
     >
-      <h1 class="text-headerColor text-h4">Sign In</h1>
+      <h1 class="text-headerColor text-h4">Sign Up</h1>
+      <q-input
+        filled
+        v-model="fullName"
+        class="full-width"
+        label="Full Name"
+        hint="Please enter your Full Name"
+        :rules="[requiredRule]"
+      />
       <q-input
         filled
         type="email"
@@ -11,6 +19,7 @@
         class="full-width"
         label="Email"
         hint="Please enter your email"
+        :rules="[requiredRule]"
       />
       <q-input
         v-model="password"
@@ -19,6 +28,7 @@
         :type="isPwdVisible ? 'password' : 'text'"
         label="Password"
         hint="Please enter your password"
+        :rules="[requiredRule]"
       >
         <template v-slot:append>
           <q-icon
@@ -29,28 +39,39 @@
         </template>
       </q-input>
 
+      <q-input
+        v-model="confirmPassword"
+        class="full-width"
+        filled
+        :type="isPwdConfirmedVisible ? 'password' : 'text'"
+        label="Password"
+        hint="Please enter your password"
+        :rules="[requiredRule]"
+      >
+        <template v-slot:append>
+          <q-icon
+            :name="isPwdConfirmedVisible ? 'visibility_off' : 'visibility'"
+            class="cursor-pointer"
+            @click="isPwdConfirmedVisible = !isPwdConfirmedVisible"
+          />
+        </template>
+      </q-input>
+
       <q-btn
         no-caps
-        style="width: 100%"
-        label="Sign In"
+        label="Sign Up"
         type="submit"
         color="accent"
         class="full-width"
       />
-
       <div>
-        <q-checkbox color="accent" v-model="rememberMe" label="Remember Me" />
+        <q-checkbox
+          color="accent"
+          v-model="termsConditions"
+          label="I Accept the Terms and Conditions"
+        />
       </div>
       <q-separator class="bg-primary full-width" />
-      <p class="items-center">You don't have an account?</p>
-      <q-btn
-        no-caps
-        outline
-        color="accent"
-        label="Sign Up Now"
-        class="q-px-xl full-width"
-        to="/signup"
-      />
       <p class="text-primary text-h6 q-mr-md">FROM</p>
       <img src="~src\assets\formImage.webp" />
     </q-form>
@@ -64,9 +85,20 @@ export default {
   setup() {
     return {
       password: ref(''),
+      confirmPassword: ref(''),
       email: ref(''),
+      fullName: ref(''),
       isPwdVisible: ref(true),
-      rememberMe: ref(false),
+      isPwdConfirmedVisible: ref(true),
+      termsConditions: ref(false),
+
+      requiredRule(value) {
+        if (value) {
+          return true;
+        } else {
+          return '* Required';
+        }
+      },
     };
   },
 };
