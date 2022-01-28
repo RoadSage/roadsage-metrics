@@ -1,7 +1,3 @@
-import pytest
-from fastapi.testclient import TestClient
-from piccolo.engine import engine_finder
-
 from ..database import UserTable
 from .helpers import TestCase
 
