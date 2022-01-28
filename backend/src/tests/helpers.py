@@ -4,21 +4,20 @@ from typing import Callable
 from fastapi.testclient import TestClient
 from piccolo.engine import engine_finder
 
-from ..database import UserTable
+from ..database import SensorReadingTable, UserTable
 from ..main import app
 from ..utils.auth import get_password_hash
 
 
 def create_tables() -> None:
-    tables = [UserTable]
-
-    for table in tables:
-        table.create_table(if_not_exists=True).run_sync()
+    UserTable.create_table(if_not_exists=True).run_sync()
+    SensorReadingTable.create_table(if_not_exists=True).run_sync()
 
 
 def add_sample_data() -> None:
     # Clear exisiting data
     UserTable.delete(force=True).run_sync()
+    SensorReadingTable.delete(force=True).run_sync()
 
     # Add sample data
     UserTable.insert(

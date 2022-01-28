@@ -1,7 +1,15 @@
 from logging import disable
 from typing import Optional
 
-from piccolo.columns.column_types import Boolean, Secret, Text, Varchar
+from piccolo.columns.base import OnDelete, OnUpdate
+from piccolo.columns.column_types import (
+    Boolean,
+    Float,
+    ForeignKey,
+    Secret,
+    Text,
+    Timestamp,
+)
 from piccolo.table import Table
 
 from .schemas import UserInDB
@@ -44,3 +52,26 @@ async def create_user(user: UserInDB) -> None:
             admin=user.admin,
         )
     ).run()
+
+
+class SensorReadingTable(Table):
+    user = ForeignKey(
+        UserTable,
+        on_delete=OnDelete.cascade,
+        on_update=OnUpdate.cascade,
+    )
+
+    timestamp = Timestamp()
+    text_displayed = Text(null=True)
+
+    lidar_distance = Float()
+    ultrasonic_distance = Float()
+
+    accelerometer_x = Float()
+    accelerometer_y = Float()
+    accelerometer_z = Float()
+
+    gyroscope_x = Float()
+    gyroscope_y = Float()
+    gyroscope_z = Float()
+

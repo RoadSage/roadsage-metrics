@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
+from .database import SensorReadingTable, UserTable
 from .database import UserTable
 from .routes.sso import router as sso_router
 from .routes.users import router as user_router
@@ -34,3 +35,4 @@ app.include_router(user_router)
 @app.on_event("startup")
 async def initialize_database() -> None:  # coverage: ignore
     await UserTable.create_table(if_not_exists=True).run()
+    await SensorReadingTable.create_table(if_not_exists=True).run()
