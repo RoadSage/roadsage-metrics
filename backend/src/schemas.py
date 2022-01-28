@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -19,3 +22,26 @@ class UserInDB(User):
 
 class NewUser(User):
     password: str
+
+
+class AccelerometerReading(BaseModel):
+    x: float
+    y: float
+    z: float
+
+
+class GyroscopeReading(BaseModel):
+    x: float
+    y: float
+    z: float
+
+
+class SensorReading(BaseModel):
+    timestamp: datetime
+    text_displayed: Optional[str] = None
+
+    lidar_distance: float
+    ultrasonic_distance: float
+
+    accelerometer: AccelerometerReading
+    gyroscope: GyroscopeReading
