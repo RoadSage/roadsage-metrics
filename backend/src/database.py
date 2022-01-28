@@ -1,5 +1,4 @@
-from logging import disable
-from typing import Optional
+from typing import List, Optional
 
 from piccolo.columns.base import OnDelete, OnUpdate
 from piccolo.columns.column_types import (
@@ -12,7 +11,7 @@ from piccolo.columns.column_types import (
 )
 from piccolo.table import Table
 
-from .schemas import UserInDB
+from .schemas import SensorReading, UserInDB
 
 
 class UserTable(Table):
@@ -75,3 +74,25 @@ class SensorReadingTable(Table):
     gyroscope_y = Float()
     gyroscope_z = Float()
 
+
+async def create_sensor_readings(user: str, readings: List[SensorReading]) -> None:
+    await SensorReadingTable.insert(
+        *[
+            SensorReadingTable(
+                user=user,
+                timestamp=reading.timestamp,
+                text_displayed=reading.text_displayed,
+                lidar_distance=reading.lidar_distance,
+                ultrasonic_distance=reading.ultrasonic_distance,
+                accelerometer_x=reading.accelerometer.x,
+                accelerometer_y=reading.accelerometer.y,
+                accelerometer_z=reading.accelerometer.z,
+                gyroscope_x=reading.gyroscope.x,
+                gyroscope_y=reading.gyroscope.y,
+                gyroscope_z=reading.gyroscope.z,
+            )
+            for reading in readings
+        ]
+    ).run()
+
+    return None

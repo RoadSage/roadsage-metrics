@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from .database import SensorReadingTable, UserTable
-from .database import UserTable
+from .routes.sensor_readings import router as sensor_readings_router
 from .routes.sso import router as sso_router
 from .routes.users import router as user_router
 
@@ -30,6 +30,7 @@ os.environ["PICCOLO_CONF"] = "src.database_conf"
 
 app.include_router(sso_router)
 app.include_router(user_router)
+app.include_router(sensor_readings_router)
 
 
 @app.on_event("startup")

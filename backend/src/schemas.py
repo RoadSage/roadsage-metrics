@@ -4,6 +4,10 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class Message(BaseModel):
+    detail: str
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
