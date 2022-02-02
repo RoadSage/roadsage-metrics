@@ -1,3 +1,4 @@
+from datetime import date
 from typing import List, Optional
 
 from piccolo.columns.base import OnDelete, OnUpdate
@@ -96,3 +97,27 @@ async def create_sensor_readings(user: str, readings: List[SensorReading]) -> No
     ).run()
 
     return None
+
+
+async def get_sensor_readings_in_range(
+    user: str, from_date: date, to_date: date
+) -> List[SensorReading]:
+    return [
+        SensorReading.from_database_dictionary(reading)
+        for reading in await SensorReadingTable.select(
+            SensorReadingTable.timestamp,
+            SensorReadingTable.text_displayed,
+            SensorReadingTable.lidar_distance,
+            SensorReadingTable.ultrasonic_distance,
+            SensorReadingTable.accelerometer_x,
+            SensorReadingTable.accelerometer_y,
+            SensorReadingTable.accelerometer_z,
+            SensorReadingTable.gyroscope_x,
+            SensorReadingTable.gyroscope_y,
+            SensorReadingTable.gyroscope_z,
+        )
+        .where(SensorReadingTable.user == user)
+        .where(SensorReadingTable.timestamp >= from_date)
+        .where(SensorReadingTable.timestamp <= to_date)
+        .run()
+    ]
