@@ -1,4 +1,5 @@
 import datetime
+from typing import Dict, Union
 
 from ..database import SensorReadingTable
 from .helpers import TestCase
@@ -166,3 +167,69 @@ class TestAddSensorReadings(TestCase):
 
         number_of_sensor_readings = len(SensorReadingTable.select().run_sync())
         assert number_of_sensor_readings == previous_number_of_sensor_readings
+
+
+class TestGetSensorReadings(TestCase):
+    def test_get_between_dates(self) -> None:
+        response = self.client.get(
+            "/sensor-readings/?from_date=2019-12-31&to_date=2020-01-03",
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+        )
+
+        assert response.status_code == 200
+        assert response.json() == [
+            {
+                "timestamp": "2020-01-01T12:00:00",
+                "text_displayed": "Thanks!",
+                "lidar_distance": 11.0,
+                "ultrasonic_distance": 10.0,
+                "accelerometer": {"x": 7.0, "y": 8.0, "z": 9.0},
+                "gyroscope": {"x": 4.0, "y": 5.0, "z": 6.0},
+            },
+            {
+                "timestamp": "2020-01-01T12:00:01",
+                "text_displayed": None,
+                "lidar_distance": 10.0,
+                "ultrasonic_distance": 18.0,
+                "accelerometer": {"x": 7.0, "y": 8.5, "z": 9.0},
+                "gyroscope": {"x": 4.0, "y": 5.0, "z": 6.3},
+            },
+        ]
+
+    def test_no_events_in_range(self) -> None:
+        response = self.client.get(
+            "/sensor-readings/?from_date=2020-12-31&to_date=2022-01-03",
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+        )
+
+        assert response.status_code == 200
+        assert response.json() == []
+
+    def test_access_other_user_not_admin(self) -> None:
+        response = self.client.get(
+            "/sensor-readings/?user=bob&from_date=2019-12-31&to_date=2020-01-03",
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+        )
+
+        assert response.json() == {
+            "detail": "Must be an Admin user to access other users data"
+        }
+        assert response.status_code == 403
+
+    def test_access_other_user_admin(self) -> None:
+        response = self.client.get(
+            "/sensor-readings/?user=sally@gmail.com&from_date=2019-12-31&to_date=2020-01-03",
+            headers={"Authorization": f"Bearer {self.get_token('admin@gmail.com')}"},
+        )
+
+        assert response.status_code == 200
+        assert response.json() == [
+            {
+                "timestamp": "2020-01-01T12:00:00",
+                "text_displayed": "Sorry",
+                "lidar_distance": 11.0,
+                "ultrasonic_distance": 10.0,
+                "accelerometer": {"x": 7.0, "y": 8.0, "z": 9.0},
+                "gyroscope": {"x": 4.0, "y": 5.0, "z": 6.0},
+            }
+        ]
