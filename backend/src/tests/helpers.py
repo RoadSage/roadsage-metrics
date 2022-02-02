@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import Callable
 
 from fastapi.testclient import TestClient
@@ -32,6 +33,68 @@ def add_sample_data() -> None:
             email="sally@gmail.com",
             full_name="Sally Smith",
             disabled=True,
+        ),
+        UserTable(
+            hashed_password=get_password_hash("password"),
+            email="admin@gmail.com",
+            full_name="Admin Account",
+            disabled=False,
+            admin=True,
+        ),
+    ).run_sync()
+
+    SensorReadingTable.insert(
+        SensorReadingTable(
+            user="johndoe@gmail.com",
+            timestamp=datetime(2020, 1, 1, 12, 0, 0),
+            text_displayed="Thanks!",
+            lidar_distance=11.0,
+            ultrasonic_distance=10.0,
+            accelerometer_x=7.0,
+            accelerometer_y=8.0,
+            accelerometer_z=9.0,
+            gyroscope_x=4.0,
+            gyroscope_y=5.0,
+            gyroscope_z=6.0,
+        ),
+        SensorReadingTable(
+            user="johndoe@gmail.com",
+            timestamp=datetime(2020, 1, 1, 12, 0, 1),
+            text_displayed=None,
+            lidar_distance=10.0,
+            ultrasonic_distance=18.0,
+            accelerometer_x=7.0,
+            accelerometer_y=8.5,
+            accelerometer_z=9.0,
+            gyroscope_x=4.0,
+            gyroscope_y=5.0,
+            gyroscope_z=6.3,
+        ),
+        SensorReadingTable(
+            user="johndoe@gmail.com",
+            timestamp=datetime(2020, 1, 4, 16, 0, 1),
+            text_displayed=None,
+            lidar_distance=15.0,
+            ultrasonic_distance=18.3,
+            accelerometer_x=7.0,
+            accelerometer_y=8.5,
+            accelerometer_z=9.1,
+            gyroscope_x=4.0,
+            gyroscope_y=5.0,
+            gyroscope_z=6.3,
+        ),
+        SensorReadingTable(
+            user="sally@gmail.com",
+            timestamp=datetime(2020, 1, 1, 12, 0, 0),
+            text_displayed="Sorry",
+            lidar_distance=11.0,
+            ultrasonic_distance=10.0,
+            accelerometer_x=7.0,
+            accelerometer_y=8.0,
+            accelerometer_z=9.0,
+            gyroscope_x=4.0,
+            gyroscope_y=5.0,
+            gyroscope_z=6.0,
         ),
     ).run_sync()
 
