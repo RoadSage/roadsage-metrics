@@ -52,19 +52,6 @@ coverage report --skip-empty
 
 ## Usage
 
-#### Single Sign On Data
-
-Sign in via Google is supported, it needs the relevant Google credentials for this to work.
-You can set this up in the [Google Developer Console](https://console.developers.google.com/apis/credentials).
-
-The credentials are read from a `.env` file, it should contain a GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.
-
-Run the following command and fill in the details in the `.env` file:
-
-```sh
-cp .env.sample .env
-```
-
 #### Secret Key
 
 The passwords are hashed and the app expects the a secret key to be stored in the APP_SECRET_KEY enviroment variable.
