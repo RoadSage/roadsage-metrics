@@ -2,9 +2,11 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from google.auth.transport import requests
+from google.oauth2 import id_token
 
 from ..database import create_user, get_user
-from ..schemas import NewUser, Token, User, UserInDB
+from ..schemas import GoogleLoginRequest, NewUser, Token, User, UserInDB
 from ..utils.auth import (
     authenticate_user,
     create_access_token,
@@ -54,3 +56,32 @@ async def signup_for_access_token(user: NewUser) -> Token:
 @router.get("/users/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)) -> User:
     return current_user
+
+
+@router.post("/login/google", response_model=Token)
+async def login_with_google_token(request: GoogleLoginRequest) -> Token:
+    """Exchange a token from Google for a user token."""
+    try:
+        token_info = id_token.verify_token(request.token, requests.Request())
+
+        email = token_info["email"]
+        user = await get_user(email)
+
+        if not user:
+            await create_user(
+                UserInDB(
+                    email=email,
+                    hashed_password="",
+                    full_name=email.split("@")[0],
+                )
+            )
+
+        return create_access_token(email)
+
+    except ValueError as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Error while verifying token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )

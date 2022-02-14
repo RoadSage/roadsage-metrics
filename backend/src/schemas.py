@@ -70,3 +70,7 @@ class SensorReading(BaseModel):
                 z=dict["gyroscope_z"],
             ),
         )
+
+
+class GoogleLoginRequest(BaseModel):
+    token: str
