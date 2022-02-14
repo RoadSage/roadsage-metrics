@@ -84,6 +84,8 @@
         color="accent"
         class="full-width"
       />
+      <GoogleSignInButtonVue />
+
       <q-separator class="bg-primary full-width" />
       <p class="text-primary text-h6 q-mr-md">FROM</p>
       <img src="~src\assets\formImage.webp" />
@@ -95,9 +97,11 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { api } from 'boot/axios';
 import axios from 'axios';
+import { api } from 'boot/axios';
 import { getUser } from 'boot/auth';
+
+import GoogleSignInButtonVue from './GoogleSignInButton.vue';
 
 type LoginResponse = {
   access_token: string;
@@ -115,7 +119,7 @@ const confirmPassword = ref('');
 const isPwdVisible = ref(false);
 const termsConditions = ref(false);
 
-const requiredRule = (value) => {
+const requiredRule = (value: string) => {
   if (value) {
     return true;
   } else {

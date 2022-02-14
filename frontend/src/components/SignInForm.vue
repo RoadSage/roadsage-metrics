@@ -48,6 +48,7 @@
         color="accent"
         class="full-width"
       />
+      <GoogleSignInButtonVue />
 
       <div>
         <q-checkbox color="accent" v-model="rememberMe" label="Remember Me" />
@@ -74,7 +75,9 @@ import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
 import { api } from 'boot/axios';
-import { getUser } from 'boot/auth';
+import { getUser } from 'src/boot/auth';
+
+import GoogleSignInButtonVue from './GoogleSignInButton.vue';
 
 type LoginResponse = {
   access_token: string;
@@ -87,7 +90,7 @@ const user = getUser();
 
 const remeberedEmail = $q.cookies.get('rememberedEmail');
 
-const requiredRule = (value) => {
+const requiredRule = (value: string) => {
   if (value) {
     return true;
   } else {
