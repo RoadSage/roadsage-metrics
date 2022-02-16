@@ -12,7 +12,7 @@ from piccolo.columns.column_types import (
 )
 from piccolo.table import Table
 
-from .schemas import SensorReading, UserInDB
+from .schemas import SensorReading, User, UserInDB
 
 
 class UserTable(Table):
@@ -52,6 +52,14 @@ async def create_user(user: UserInDB) -> None:
             admin=user.admin,
         )
     ).run()
+
+
+async def update_user_password(user: User, new_password_hash: str) -> None:
+    await (
+        UserTable.update(hashed_password=new_password_hash)
+        .where(UserTable.email == user.email)
+        .run()
+    )
 
 
 class SensorReadingTable(Table):

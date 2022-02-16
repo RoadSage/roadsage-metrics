@@ -23,7 +23,7 @@ app.add_middleware(
 )
 app.add_middleware(SessionMiddleware, secret_key="some-random-string")
 
-
+# Set database
 # Set database config
 os.environ["PICCOLO_CONF"] = "src.database_conf"
 

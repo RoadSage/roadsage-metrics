@@ -28,6 +28,10 @@ class NewUser(User):
     password: str
 
 
+class UpdatePasswordRequest(BaseModel):
+    new_password: str
+
+
 class AccelerometerReading(BaseModel):
     x: float
     y: float

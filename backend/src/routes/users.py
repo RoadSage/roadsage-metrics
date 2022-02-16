@@ -1,12 +1,18 @@
-from datetime import timedelta
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from google.auth.transport import requests
 from google.oauth2 import id_token
 
-from ..database import create_user, get_user
-from ..schemas import GoogleLoginRequest, NewUser, Token, User, UserInDB
+from ..database import create_user, get_user, update_user_password
+from ..schemas import (
+    GoogleLoginRequest,
+    Message,
+    NewUser,
+    Token,
+    UpdatePasswordRequest,
+    User,
+    UserInDB,
+)
 from ..utils.auth import (
     authenticate_user,
     create_access_token,
@@ -85,3 +91,14 @@ async def login_with_google_token(request: GoogleLoginRequest) -> Token:
             detail="Error while verifying token",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+@router.put("/users/me/update-password", response_model=Message)
+async def update_password(
+    request: UpdatePasswordRequest, user: User = Depends(get_current_active_user)
+) -> Message:
+
+    new_hashed_password = get_password_hash(request.new_password)
+    await update_user_password(user, new_hashed_password)
+
+    return Message(detail="Password updated successfully")
