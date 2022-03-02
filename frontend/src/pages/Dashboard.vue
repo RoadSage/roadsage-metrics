@@ -34,6 +34,15 @@
 
     <div class="col-9">
       <Chart />
+
+      <div class="q-pa-lg">
+        <q-table
+          title="Messages Displayed"
+          :rows="rows"
+          :columns="messagesTableColumns"
+          row-key="name"
+        />
+      </div>
     </div>
   </q-page>
 </template>
@@ -53,4 +62,27 @@ const user = getUser();
 const userData = await api(user.value)
   .get('/users/me/')
   .then((response) => response.data as UserResponse);
+
+const messagesTableColumns = [
+  {
+    name: 'message',
+    label: 'Message',
+    field: 'message',
+    sortable: true,
+  },
+  {
+    name: 'times_displayed',
+    label: 'Times Displayed',
+    field: 'times_displayed',
+    sortable: true,
+    sort: (a: number, b: number) => Number(a) - Number(b),
+  },
+];
+const rows = await api(user.value)
+  .get('/sensor-readings/messages')
+  .then((response) =>
+    Object.entries(response.data as Record<string, number>).map(
+      (message, times_displayed) => ({ message, times_displayed })
+    )
+  );
 </script>
