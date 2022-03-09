@@ -102,6 +102,7 @@ def add_sample_data() -> None:
 class TestCase:
     def setup_method(self, _test_method: Callable[[], None]) -> None:
         os.environ["APP_SECRET_KEY"] = "secret"
+        os.environ["PICCOLO_CONF"] = "src.test_database_conf"
         create_tables()
         add_sample_data()
         self.client = TestClient(app)
