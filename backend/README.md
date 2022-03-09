@@ -52,6 +52,12 @@ coverage report --skip-empty
 
 ## Usage
 
+### Database
+
+The app is currently configured to use a SQLite database. This is only for development and testing, for production this should be swapped out for a PostgreSQL database. The ORM we are using (Piccolo) supports both, so changing is just swapping out a config file to point to the new database.
+
+The configuration for the database is found in `/backend/config/database_conf.py`, and a skeleton of the configuration for PostgreSQL is commented out in the file. The skeleton reads the database URL from the `DATABASE_URL` enviroment variable, this is auto injected when a database is set up on hosts like Heroku or Railway.
+
 #### Secret Key
 
 The passwords are hashed and the app expects the a secret key to be stored in the APP_SECRET_KEY enviroment variable.
@@ -77,3 +83,5 @@ uvicorn src.main:app --reload
 ```
 
 FastAPI automatically documents the available API routes and generates automatic documentation which can be viewed by going to `/docs` or `/redoc`.
+
+If deploying for production, remove the `--reload` flag from the command.
