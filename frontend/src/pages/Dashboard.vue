@@ -10,7 +10,7 @@
         </div>
         <div class="q-ml-md">
           <p class="text-caption">Account Name</p>
-          <p class="text-body2 text-weight-medium">Unitic Admin</p>
+          <p class="text-body2 text-weight-medium">{{ userData.full_name }}</p>
         </div>
       </div>
       <!-- Profile Card End -->
@@ -18,7 +18,7 @@
       <div class="q-mt-xl q-ml-md">
         <p class="text-caption">Email</p>
         <div class="row justify-between items-center">
-          <p>admin@unitic.com</p>
+          <p>{{ userData.email }}</p>
           <q-btn class="q-mb-md q-mr-sm" flat>Change</q-btn>
         </div>
       </div>
