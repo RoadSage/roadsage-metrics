@@ -233,3 +233,34 @@ class TestGetSensorReadings(TestCase):
                 "gyroscope": {"x": 4.0, "y": 5.0, "z": 6.0},
             }
         ]
+
+
+class TestGetMessageCounts(TestCase):
+    def test_get_message_counts(self) -> None:
+        response = self.client.get(
+            "/sensor-readings/messages",
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+        )
+
+        assert response.status_code == 200
+        assert response.json() == {"Thanks!": 1}
+
+    def test_access_other_user_not_admin(self) -> None:
+        response = self.client.get(
+            "/sensor-readings/messages?user=bob",
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+        )
+
+        assert response.json() == {
+            "detail": "Must be an Admin user to access other users data"
+        }
+        assert response.status_code == 403
+
+    def test_access_other_user_admin(self) -> None:
+        response = self.client.get(
+            "/sensor-readings/messages?user=sally@gmail.com",
+            headers={"Authorization": f"Bearer {self.get_token('admin@gmail.com')}"},
+        )
+
+        assert response.status_code == 200
+        assert response.json() == {"Sorry": 1}
