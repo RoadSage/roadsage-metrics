@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from piccolo.columns.base import OnDelete, OnUpdate
 from piccolo.columns.column_types import (
@@ -10,6 +10,7 @@ from piccolo.columns.column_types import (
     Text,
     Timestamp,
 )
+from piccolo.query.methods.select import Count
 from piccolo.table import Table
 
 from .schemas import SensorReading, User, UserInDB
@@ -129,3 +130,21 @@ async def get_sensor_readings_in_range(
         .where(SensorReadingTable.timestamp <= to_date)
         .run()
     ]
+
+
+async def get_message_count(user: str) -> Dict[str, int]:
+    counts = (
+        await SensorReadingTable.select(
+            SensorReadingTable.text_displayed,
+            Count(SensorReadingTable.timestamp),
+        )
+        .group_by(SensorReadingTable.text_displayed)
+        .where(SensorReadingTable.user == user)
+        .run()
+    )
+
+    return {
+        result["text_displayed"]: result["count"]
+        for result in counts
+        if result["text_displayed"] is not None
+    }

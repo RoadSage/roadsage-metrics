@@ -1,9 +1,13 @@
 from datetime import date
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from ..database import create_sensor_readings, get_sensor_readings_in_range
+from ..database import (
+    create_sensor_readings,
+    get_message_count,
+    get_sensor_readings_in_range,
+)
 from ..schemas import Message, SensorReading, User
 from ..utils.auth import get_current_active_user
 
@@ -54,3 +58,23 @@ async def add_sensor_readings(
         )
 
     return Message(detail=f"Successfully added {len(readings)} sensor readings")
+
+
+@router.get("/messages", response_model=Dict[str, int])
+async def get_messages_displayed(
+    user: Optional[str] = None, current_user: User = Depends(get_current_active_user)
+) -> Dict[str, int]:
+    """
+    Gets the counts for each of the different messages displayed by the user on the car display.
+    """
+
+    if user is not None:
+        if current_user.admin:
+            return await get_message_count(user)
+        else:
+            raise HTTPException(
+                status_code=403,
+                detail="Must be an Admin user to access other users data",
+            )
+
+    return await get_message_count(current_user.email)
