@@ -112,3 +112,32 @@ class TestAuthentication(TestCase):
 
         body = response.json()
         assert body == {"detail": "User with email 'sally@gmail.com' already exists"}
+
+    def test_update_password(self) -> None:
+        # first login with original password
+        response = self.client.post(
+            "/login", data={"username": "johndoe@gmail.com", "password": "password"}
+        )
+        assert response.status_code == 200
+
+        # update password
+        response = self.client.put(
+            "/users/me/update-password",
+            json={"new_password": "new_password"},
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+        )
+
+        assert response.json() == {"detail": "Password updated successfully"}
+        assert response.status_code == 200
+
+        # old password should no longer work
+        response = self.client.post(
+            "/login", data={"username": "johndoe@gmail.com", "password": "password"}
+        )
+        assert response.status_code == 401
+
+        # new password should work
+        response = self.client.post(
+            "/login", data={"username": "johndoe@gmail.com", "password": "new_password"}
+        )
+        assert response.status_code == 200
