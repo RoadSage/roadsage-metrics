@@ -30,10 +30,15 @@
           <q-btn class="q-mb-md q-mr-sm" flat>Change</q-btn>
         </div>
       </div>
+
+      <SelectUser v-if="userData.admin" v-model="selectedUser" />
     </div>
 
     <div class="col-9">
-      <Chart />
+      <h2 v-if="userData.admin && selectedUser" class="text-h5 q-pl-xl">
+        Viewing data for user: {{ selectedUser }}
+      </h2>
+      <Chart :selected-user="selectedUser" />
 
       <div class="q-pa-lg">
         <q-table
@@ -47,9 +52,11 @@
   </q-page>
 </template>
 <script lang="ts" setup>
+import { ref, type Ref, watchEffect } from 'vue';
 import { authorizedApi as api } from 'boot/axios';
 import { getUser } from 'boot/auth';
 import Chart from '../components/Chart.vue';
+import SelectUser from '../components/SelectUser.vue';
 
 type UserResponse = {
   email: string;
@@ -62,6 +69,8 @@ const user = getUser();
 const userData = await api(user.value)
   .get('/users/me/')
   .then((response) => response.data as UserResponse);
+
+const selectedUser = ref('');
 
 const messagesTableColumns = [
   {
@@ -78,11 +87,19 @@ const messagesTableColumns = [
     sort: (a: number, b: number) => Number(a) - Number(b),
   },
 ];
-const rows = await api(user.value)
-  .get('/sensor-readings/messages')
-  .then((response) =>
-    Object.entries(response.data as Record<string, number>).map(
-      (message, times_displayed) => ({ message, times_displayed })
-    )
-  );
+
+const rows: Ref<{ message: string; times_displayed: number }[]> = ref([]);
+watchEffect(async function () {
+  let userQuery = '';
+  if (selectedUser.value) {
+    userQuery = `?user=${selectedUser.value}`;
+  }
+  rows.value = await api(user.value)
+    .get(`/sensor-readings/messages${userQuery}`)
+    .then((response) =>
+      Object.entries(response.data as Record<string, number>).map(
+        ([message, times_displayed]) => ({ message, times_displayed })
+      )
+    );
+});
 </script>

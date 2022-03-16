@@ -21,7 +21,7 @@
         @click="changeDateBy(7)"
       />
     </div>
-    <p>
+    <p class="q-pl-xl">
       Showing data from {{ formatDateForUser(dateWeekAgo) }} until
       {{ formatDateForUser(date) }}
     </p>
@@ -33,6 +33,10 @@ import { ref, shallowRef, computed, triggerRef, watchEffect } from 'vue';
 import { authorizedApi as api } from 'boot/axios';
 import { getUser } from 'boot/auth';
 import type { Ref } from 'vue';
+
+const props = defineProps({
+  selectedUser: { type: String, default: '' },
+});
 
 type GraphData = {
   timestamp: string;
@@ -112,11 +116,15 @@ const formatDateForUser = (date: Date) => {
 
 const chartData: Ref<GraphData[]> = ref([]);
 watchEffect(async function () {
+  let userQuery = '';
+  if (props.selectedUser) {
+    userQuery = `&user=${props.selectedUser}`;
+  }
   chartData.value = await api(user.value)
     .get(
       `/sensor-readings/?from_date=${formatDate(
         dateWeekAgo.value
-      )}&to_date=${formatDate(date.value)}`
+      )}&to_date=${formatDate(date.value)}${userQuery}`
     )
     .then((response) => response.data as GraphData[]);
 });
