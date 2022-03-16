@@ -9,11 +9,16 @@ from piccolo.columns.column_types import (
     Secret,
     Text,
     Timestamp,
+    Varchar,
 )
 from piccolo.query.methods.select import Count
 from piccolo.table import Table
 
+<<<<<<< HEAD
 from .schemas import SensorReading, User, UserInDB
+=======
+from .schemas import AppCommand, SensorReading, UserInDB
+>>>>>>> 6a93221 (feat: add app command api routes)
 
 
 class UserTable(Table):
@@ -148,3 +153,48 @@ async def get_message_count(user: str) -> Dict[str, int]:
         for result in counts
         if result["text_displayed"] is not None
     }
+
+
+class AppCommandTable(Table):
+    user = ForeignKey(
+        UserTable,
+        on_delete=OnDelete.cascade,
+        on_update=OnUpdate.cascade,
+    )
+
+    timestamp = Timestamp()
+    command = Text(null=False)
+    invocation_method = Varchar(20)
+
+
+async def get_app_commands_in_range(
+    user: str, from_date: date, to_date: date
+) -> List[AppCommand]:
+    return [
+        AppCommand(**reading)
+        for reading in await AppCommandTable.select(
+            AppCommandTable.timestamp,
+            AppCommandTable.command,
+            AppCommandTable.invocation_method,
+        )
+        .where(AppCommandTable.user == user)
+        .where(AppCommandTable.timestamp >= from_date)
+        .where(AppCommandTable.timestamp <= to_date)
+        .run()
+    ]
+
+
+async def add_app_commands(user: str, commands: List[AppCommand]) -> None:
+    await AppCommandTable.insert(
+        *[
+            AppCommandTable(
+                user=user,
+                timestamp=command.timestamp,
+                command=command.command,
+                invocation_method=command.invocation_method,
+            )
+            for command in commands
+        ]
+    ).run()
+
+    return None

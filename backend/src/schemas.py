@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Optional, Union
+from typing import Dict, Literal, Optional, Union
 
 from pydantic import BaseModel
 
@@ -30,6 +30,10 @@ class NewUser(User):
 
 class UpdatePasswordRequest(BaseModel):
     new_password: str
+
+
+class GoogleLoginRequest(BaseModel):
+    token: str
 
 
 class AccelerometerReading(BaseModel):
@@ -76,5 +80,7 @@ class SensorReading(BaseModel):
         )
 
 
-class GoogleLoginRequest(BaseModel):
-    token: str
+class AppCommand(BaseModel):
+    timestamp: datetime
+    command: str
+    invocation_method: Union[Literal["touch"], Literal["voice"]]
