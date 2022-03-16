@@ -14,11 +14,7 @@ from piccolo.columns.column_types import (
 from piccolo.query.methods.select import Count
 from piccolo.table import Table
 
-<<<<<<< HEAD
-from .schemas import SensorReading, User, UserInDB
-=======
-from .schemas import AppCommand, SensorReading, UserInDB
->>>>>>> 6a93221 (feat: add app command api routes)
+from .schemas import AppCommand, SensorReading, User, UserInDB
 
 
 class UserTable(Table):
