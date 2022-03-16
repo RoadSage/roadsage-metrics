@@ -36,7 +36,7 @@ async def get_sensor_readings(
                 detail="Must be an Admin user to access other users data",
             )
 
-    return await get_sensor_readings_in_range("johndoe@gmail.com", from_date, to_date)
+    return await get_sensor_readings_in_range(current_user.email, from_date, to_date)
 
 
 @router.post("/", response_model=Message)
