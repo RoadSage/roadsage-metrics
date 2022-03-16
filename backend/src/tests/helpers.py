@@ -5,7 +5,7 @@ from typing import Callable
 from fastapi.testclient import TestClient
 from piccolo.engine import engine_finder
 
-from ..database import SensorReadingTable, UserTable
+from ..database import AppCommandTable, SensorReadingTable, UserTable
 from ..main import app
 from ..utils.auth import get_password_hash
 
@@ -13,12 +13,14 @@ from ..utils.auth import get_password_hash
 def create_tables() -> None:
     UserTable.create_table(if_not_exists=True).run_sync()
     SensorReadingTable.create_table(if_not_exists=True).run_sync()
+    AppCommandTable.create_table(if_not_exists=True).run_sync()
 
 
 def add_sample_data() -> None:
     # Clear exisiting data
     UserTable.delete(force=True).run_sync()
     SensorReadingTable.delete(force=True).run_sync()
+    AppCommandTable.delete(force=True).run_sync()
 
     # Add sample data
     UserTable.insert(
@@ -95,6 +97,39 @@ def add_sample_data() -> None:
             gyroscope_x=4.0,
             gyroscope_y=5.0,
             gyroscope_z=6.0,
+        ),
+    ).run_sync()
+
+    AppCommandTable.insert(
+        AppCommandTable(
+            user="johndoe@gmail.com",
+            timestamp=datetime(2020, 1, 1, 12, 0, 0),
+            command="Too Close",
+            invocation_method="touch",
+        ),
+        AppCommandTable(
+            user="johndoe@gmail.com",
+            timestamp=datetime(2020, 1, 3, 14, 4, 0),
+            command="Thanks!",
+            invocation_method="voice",
+        ),
+        AppCommandTable(
+            user="johndoe@gmail.com",
+            timestamp=datetime(2020, 5, 7, 14, 9, 1),
+            command="Sorry",
+            invocation_method="voice",
+        ),
+        AppCommandTable(
+            user="sally@gmail.com",
+            timestamp=datetime(2020, 1, 1, 12, 0, 0),
+            command="Thanks!",
+            invocation_method="voice",
+        ),
+        AppCommandTable(
+            user="sally@gmail.com",
+            timestamp=datetime(2020, 1, 1, 13, 0, 0),
+            command="Sorry",
+            invocation_method="voice",
         ),
     ).run_sync()
 
