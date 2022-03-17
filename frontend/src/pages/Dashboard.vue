@@ -1,7 +1,6 @@
 <template>
   <q-page class="row">
     <div class="col-3 dashboardBG">
-      <!-- Profile Card Beginning -->
       <div class="row q-mt-xl q-ml-md">
         <div>
           <q-avatar>
@@ -13,13 +12,11 @@
           <p class="text-body2 text-weight-medium">{{ userData.full_name }}</p>
         </div>
       </div>
-      <!-- Profile Card End -->
 
       <div class="q-mt-xl q-ml-md">
         <p class="text-caption">Email</p>
         <div class="row justify-between items-center">
           <p>{{ userData.email }}</p>
-          <q-btn class="q-mb-md q-mr-sm" flat>Change</q-btn>
         </div>
       </div>
 
@@ -27,9 +24,22 @@
         <p class="text-caption">Password</p>
         <div class="row justify-between items-center">
           <p>*********</p>
-          <q-btn class="q-mb-md q-mr-sm" flat>Change</q-btn>
+
+          <q-btn
+            class="q-mb-md q-mr-sm"
+            flat
+            @click="passwordFormVisible = !passwordFormVisible"
+          >
+            <template v-if="passwordFormVisible"> Hide </template>
+            <template v-else> Change </template>
+          </q-btn>
         </div>
       </div>
+
+      <UpdatePasswordForm
+        v-if="passwordFormVisible"
+        @submit="passwordFormVisible = false"
+      />
 
       <SelectUser v-if="userData.admin" v-model="selectedUser" />
     </div>
@@ -57,6 +67,7 @@ import { authorizedApi as api } from 'boot/axios';
 import { getUser } from 'boot/auth';
 import Chart from '../components/Chart.vue';
 import SelectUser from '../components/SelectUser.vue';
+import UpdatePasswordForm from '../components/UpdatePasswordForm.vue';
 
 type UserResponse = {
   email: string;
@@ -64,6 +75,8 @@ type UserResponse = {
   disabled: boolean;
   admin: boolean;
 };
+
+const passwordFormVisible = ref(false);
 
 const user = getUser();
 const userData = await api(user.value)
