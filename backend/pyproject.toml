@@ -20,7 +20,7 @@ piccolo = {extras = ["sqlite"], version = "^0.58.0"}
 python-multipart = "^0.0.5"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-httpx = "^0.21.1"
+httpx = "^0.23.0"
 itsdangerous = "^2.0.1"
 google-auth = "^2.6.0"
 
